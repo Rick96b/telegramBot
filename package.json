@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "ts-prepare": "ts-patch install -s",
     "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx src",
     "eslint:dump": "eslint --print-config ./.eslintrc.json",
-    "start:dev": "npm run ts-prepare && ts-node ./src/index.ts"
+    "start:dev": "set NODE_PATH=./src && ts-node ./src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +26,8 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "google-auth-library": "^8.9.0",
+    "google-spreadsheet": "^4.0.3",
     "telegraf": "^4.13.1"
   }
 }

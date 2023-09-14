@@ -26,10 +26,12 @@
 
     /* Modules */
     "module": "commonjs",                                /* Specify what module code is generated. */
-    // "rootDir": "./",                                  /* Specify the root folder within your source files. */
-    // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
-    "baseUrl": "./src",                                /* Specify the base directory to resolve non-relative module names. */
-    // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "rootDir": "./",                                  /* Specify the root folder within your source files. */
+    "moduleResolution": "node",                     /* Specify how TypeScript looks up a file from a given module specifier. */
+    "baseUrl": "./src",    
+    "paths": {
+      "@scenes/*": ["scenes/*"],
+    },                  /* Specify the base directory to resolve non-relative module names. */                                   /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
     // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
@@ -90,7 +92,7 @@
     "strictPropertyInitialization": true,             /* Check for class properties that are declared but not set in the constructor. */
     "noImplicitThis": true,                           /* Enable error reporting when 'this' is given the type 'any'. */
     "useUnknownInCatchVariables": true,               /* Default catch clause variables as 'unknown' instead of 'any'. */
-    "alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
+    //"alwaysStrict": true,                             /* Ensure 'use strict' is always emitted. */
     "noUnusedLocals": true,                           /* Enable error reporting when local variables aren't read. */
     "noUnusedParameters": true,                       /* Raise an error when a function parameter isn't read. */
     "exactOptionalPropertyTypes": true,               /* Interpret optional property types as written, rather than adding 'undefined'. */
@@ -104,15 +106,12 @@
 
    
     // "skipDefaultLibCheck": true,                    
-    "skipLibCheck": true  ,
-    "plugins": [
-      {
-          "transform": "typescript-transform-paths"
-      },
-      {
-          "transform": "typescript-transform-paths",
-          "afterDeclarations": true
-      }
-    ],                        
+    "skipLibCheck": true  ,                  
+  },
+  "include": [
+    "src",
+  ],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }
