@@ -1,4 +1,4 @@
-import { sheetsApi } from "core/sheets";
+import { firestoreApi } from "core/firestore";
 import { Composer, Scenes } from "telegraf";
 import { MyContext } from "config";
 
@@ -29,7 +29,7 @@ patronymic_handler.on("text", async ctx => {
 groupNumber_handler.on("text", async ctx => {
     ctx.session.user.groupNumber = ctx.message.text;
     ctx.reply("Отлично! Вы прошли регистрацию");
-	sheetsApi.addNewUser(ctx.session.user)
+	firestoreApi.addNewUser(ctx.session.user)
     return ctx.scene.leave();
 });
 
