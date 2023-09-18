@@ -4,4 +4,13 @@ export type User = Partial<{
 	surname: string;
 	patronymic: string;
 	groupNumber: string;
+	isMentor: boolean;
+}>
+
+export type Schedule = Partial<{
+	id: string;
+	griup: string;
+	name: string;
+	time: string;
+	date: string;
 }>

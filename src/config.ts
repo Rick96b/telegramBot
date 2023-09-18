@@ -1,16 +1,13 @@
 import { Context, Scenes } from "telegraf";
-import { User } from "types";
+import { Schedule, User } from "types";
 
-interface MyWizardSession extends Scenes.WizardSessionData {
-	myWizardSessionProp: number;
-}
-
-interface MySession extends Scenes.WizardSession<MyWizardSession> {
+interface MySession extends Scenes.WizardSession<Scenes.WizardSessionData> {
 	user: User;
 }
 
 export interface MyContext extends Context {
+	state: Schedule;
 	session: MySession;
-	scene: Scenes.SceneContextScene<MyContext, MyWizardSession>;
+	scene: Scenes.SceneContextScene<MyContext, Scenes.WizardSessionData>;
 	wizard: Scenes.WizardContextWizard<MyContext>;
 }

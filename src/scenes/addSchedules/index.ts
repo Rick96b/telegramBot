@@ -1,26 +1,34 @@
 import { Composer, Scenes } from "telegraf";
 import { MyContext } from "config";
+import { v4 as uuidv4 } from 'uuid';
+import { firestoreApi } from "core/firestore";
 
+const group_handler = new Composer<MyContext>();
 const time_handler = new Composer<MyContext>();
 const date_handler = new Composer<MyContext>();
 const name_handler = new Composer<MyContext>();
 
+group_handler.on('text', async (ctx) => {
+    ctx.state['group'] = ctx.message.text;
+    await ctx.reply("Напишите время мероприятия в формате HH:MM");
+    return ctx.wizard.next();
+});
+
 time_handler.on('text', async (ctx) => {
-    ctx.state['schedule'] = {};
-    ctx.state['schedule'].time = ctx.message.text;
-    await ctx.reply("Введите дату мероприятия в формате DD.MM.YYYY");
+    ctx.state['time'] = ctx.message.text;
+    await ctx.reply("Напишите время мероприятия в формате HH:MM",);
     return ctx.wizard.next();
 });
 
 date_handler.on("text", async ctx => {
-    ctx.state['schedule'].date = ctx.message.text;
+    ctx.state['date'] = ctx.message.text;
     await ctx.reply("Введите название мероприятия");
     return ctx.wizard.next();
 });
 
 name_handler.on("text", async ctx => {
-    ctx.state['schedule'].name = ctx.message.text;
-    await ctx.reply("Введите свой номер группы");
+    ctx.state['name'] = ctx.message.text;
+    firestoreApi.schedule.addNewSchedule({...ctx.state, id: uuidv4()})
     return ctx.scene.leave();
 });
 
@@ -29,7 +37,7 @@ const addSchedulesScene = new Scenes.WizardScene<MyContext>(
 	"add-schedule",
 	async ctx => {
 		await ctx.reply(
-			"Напишите время мероприятия в формате HH:MM",
+			"Введите номер группы",
 		)
 		return ctx.wizard.next();
 	},

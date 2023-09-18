@@ -28,8 +28,10 @@ patronymic_handler.on("text", async ctx => {
 
 groupNumber_handler.on("text", async ctx => {
     ctx.session.user.groupNumber = ctx.message.text;
+    ctx.session.user.uid = String(ctx.chat.id);
+    ctx.session.user.isMentor = false;
     ctx.reply("Отлично! Вы прошли регистрацию");
-	firestoreApi.addNewUser(ctx.session.user)
+	firestoreApi.user.addNewUser(ctx.session.user)
     return ctx.scene.leave();
 });
 
