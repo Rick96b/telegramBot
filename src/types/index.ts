@@ -14,3 +14,10 @@ export type Schedule = Partial<{
 	time: string;
 	date: string;
 }>
+
+export type Group = Partial<{
+	name: string;
+	mentorUID: string;
+	members: string[];
+	events: string[];
+}>

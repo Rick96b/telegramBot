@@ -11,7 +11,6 @@ export const getUserByUID = async (userUID: string) => {
     let user: User = {}
     try {
         user = (await getDoc(doc(firestore, 'Users', userUID))).data() as User;
-        console.log(user)
     } catch(error){
         console.log(error)
     }
