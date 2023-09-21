@@ -7,6 +7,17 @@ const surname_handler = new Composer<MyContext>();
 const patronymic_handler = new Composer<MyContext>();
 const groupNumber_handler = new Composer<MyContext>();
 
+groupNumber_handler.on("text", async ctx => {
+    const groupNames = await firestoreApi.group.getExistingGroupNames();
+    if(groupNames.names.includes(ctx.message.text)) {
+        ctx.session.user.groupNumber = ctx.message.text;
+        ctx.reply('Введите своё имя')
+        ctx.wizard.next();
+    } else {
+        await ctx.reply("Группа не найдена!\nПопробуй еще раз");
+    }
+});
+
 name_handler.on('text', async (ctx) => {
     ctx.session.user = {};
     ctx.session.user.name = ctx.message.text;
@@ -22,31 +33,22 @@ surname_handler.on("text", async ctx => {
 
 patronymic_handler.on("text", async ctx => {
     ctx.session.user.patronymic = ctx.message.text;
-    await ctx.reply("Введите свой номер группы");
-    return ctx.wizard.next();
-});
-
-groupNumber_handler.on("text", async ctx => {
-    ctx.session.user.groupNumber = ctx.message.text;
     ctx.session.user.uid = String(ctx.chat.id);
-    ctx.session.user.isMentor = false;
+    firestoreApi.user.addNewUser(ctx.session.user)
     ctx.reply("Отлично! Вы прошли регистрацию");
-	firestoreApi.user.addNewUser(ctx.session.user)
     return ctx.scene.leave();
 });
 
 const registrationScene = new Scenes.WizardScene<MyContext>(
 	"registration",
 	async ctx => {
-		await ctx.reply(
-			"Давайте начнем регистрацию \nВведите своё имя",
-		)
+        await ctx.reply("Давайте начнем регистрацию \nВведите название своей группы");
 		return ctx.wizard.next();
 	},
+    groupNumber_handler,
 	name_handler,
 	surname_handler,
 	patronymic_handler,
-	groupNumber_handler
 );
 
 export {registrationScene}

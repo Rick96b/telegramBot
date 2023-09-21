@@ -10,7 +10,7 @@ text_handler.on('text', async (ctx) => {
 		await ctx.reply("Такое название группы уже существует")
 		await ctx.scene.reenter();
 	} else {
-		firestoreApi.group.addNewGroup(ctx.message.text, String(ctx.chat.id))
+		await firestoreApi.group.addNewGroup(ctx.message.text, String(ctx.chat.id))
 		await ctx.reply("Группа создана!",)
 		return ctx.scene.leave();
 	}

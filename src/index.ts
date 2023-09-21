@@ -1,61 +1,37 @@
 import { config } from 'dotenv'
-import { Markup, Telegraf, session } from "telegraf";
+import { Telegraf, session } from "telegraf";
 import { Scenes } from 'telegraf';
 import { registrationScene } from "@scenes/registration";
 import { MyContext } from 'config';
-import { addSchedulesScene } from '@scenes/addSchedules';
+import { addEventScene } from '@scenes/addNewEvent';
 import { addGroupScene } from '@scenes/addNewGroup';
 import { firestoreApi } from 'core/firestore';
+import { secretMentorRegistrationScene } from '@scenes/secretMentorRegistration';
+import { useBotCommands } from 'commands';
+import { useBotActions } from 'actions';
+import { showGroupEventsScene } from '@scenes/showGroupEvents';
 
 config();
 
 export const bot = new Telegraf<MyContext>(process.env['TELEGRAM_API_TOKEN'] || '');
-const stage = new Scenes.Stage<MyContext>([registrationScene, addSchedulesScene, addGroupScene]);
+const stage = new Scenes.Stage<MyContext>([
+    registrationScene, 
+    addEventScene, 
+    addGroupScene, 
+    secretMentorRegistrationScene,
+    showGroupEventsScene
+]);
 
 bot.use(session());
 bot.use(stage.middleware());
 bot.use(async (ctx, next) => {
-    ctx.session.user = await firestoreApi.user.getUserByUID(String(ctx.chat?.id))
+    ctx.session.user = await firestoreApi.user.getUserByUID(String(ctx.chat?.id));
+    ctx.session.mentor = await firestoreApi.mentor.getMentorByUID(String(ctx.chat?.id));
     next();
 })
-bot.start(async(ctx) => {
-    return ctx.reply(
-        'Я в деле!',
-        Markup.inlineKeyboard([
-            ctx.session.user ? [] : [Markup.button.callback('Регистрация', 'registration')],
-            ctx.session.user?.isMentor ? [Markup.button.callback('Добавить групповое мероприятие', 'add-schedule')] : [],
-            ctx.session.user?.isMentor ? [Markup.button.callback('Добавить группу', 'add-group')] : []
-        ])
-    )
-})
 
-bot.command('menu', async (ctx) => {
-    console.log(ctx.session.user)
-    return ctx.reply(
-        'Я в деле!',
-        Markup.inlineKeyboard([
-            ctx.session.user ? [] : [Markup.button.callback('Регистрация', 'registration')],
-            ctx.session.user?.isMentor ? [Markup.button.callback('Добавить групповое мероприятие', 'add-schedule')] : [],
-            ctx.session.user?.isMentor ? [Markup.button.callback('Добавить группу', 'add-group')] : []
-        ])
-    )
-})
-
-bot.action('registration', async (ctx) => {
-    await ctx.answerCbQuery();
-    await ctx.scene.enter('registration')
-})
-
-bot.action('add-schedule', async (ctx) => {
-    await ctx.answerCbQuery();
-    await ctx.scene.enter('add-schedule')
-})
-
-bot.action('add-group', async (ctx) => {
-    await ctx.answerCbQuery();
-    await ctx.scene.enter('add-group')
-})
-
+useBotCommands(bot);
+useBotActions(bot);
 
 bot.launch();
 // Enable graceful stop
