@@ -18,6 +18,12 @@ export const addNewGroup = async (groupName: string, userUID: string) => {
     }
 }
 
+export const addNewMember = async (groupId: string, memberId: string) => {
+    await updateDoc(doc(firestore, 'Groups', groupId), {
+        members: arrayUnion(memberId) 
+    })
+}
+
 export const getExistingGroupNames = async () => {
     return (await getDoc(doc(firestore, 'Groups', 'GroupNames'))).data() as {names: string[]} || {names: []};
 }

@@ -12,12 +12,7 @@ group_handler.on('text', async (ctx)=> {
             firestoreApi
             .event
             .getEventById(eventId)
-            .then(event => ctx.reply(`
-                ${event.name} 
-                Для "${event.group}"
-                ${event.date}
-                ${event.time}
-            `))
+            .then(event => ctx.reply(`${event.name}\n${event.date}\n${event.time}`))
         )
     }
     ctx.scene.leave();
@@ -26,7 +21,7 @@ group_handler.on('text', async (ctx)=> {
 const showGroupEventsScene = new Scenes.WizardScene<MyContext>(
 	"show-group-events",
 	async ctx => {
-        await ctx.reply("Введите номер группы");
+        await ctx.reply("Введите название группы");
 		return ctx.wizard.next();
 	},
     group_handler

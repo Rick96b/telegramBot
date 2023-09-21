@@ -10,7 +10,7 @@ const groupNumber_handler = new Composer<MyContext>();
 groupNumber_handler.on("text", async ctx => {
     const groupNames = await firestoreApi.group.getExistingGroupNames();
     if(groupNames.names.includes(ctx.message.text)) {
-        ctx.session.user.groupNumber = ctx.message.text;
+        ctx.session.user.group = ctx.message.text;
         ctx.reply('Введите своё имя')
         ctx.wizard.next();
     } else {
@@ -35,6 +35,7 @@ patronymic_handler.on("text", async ctx => {
     ctx.session.user.patronymic = ctx.message.text;
     ctx.session.user.uid = String(ctx.chat.id);
     firestoreApi.user.addNewUser(ctx.session.user)
+    firestoreApi.group.addNewMember(ctx.session.user.group!, ctx.session.user.uid)
     ctx.reply("Отлично! Вы прошли регистрацию");
     return ctx.scene.leave();
 });
