@@ -8,6 +8,7 @@ const patronymic_handler = new Composer<MyContext>();
 const groupNumber_handler = new Composer<MyContext>();
 
 groupNumber_handler.on("text", async ctx => {
+    ctx.session.user = {};
     const groupNames = await firestoreApi.group.getExistingGroupNames();
     if(groupNames.names.includes(ctx.message.text)) {
         ctx.session.user.group = ctx.message.text;
@@ -19,7 +20,6 @@ groupNumber_handler.on("text", async ctx => {
 });
 
 name_handler.on('text', async (ctx) => {
-    ctx.session.user = {};
     ctx.session.user.name = ctx.message.text;
     await ctx.reply("Введите свою фамилию");
     return ctx.wizard.next();

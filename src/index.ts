@@ -10,6 +10,7 @@ import { secretMentorRegistrationScene } from '@scenes/secretMentorRegistration'
 import { useBotCommands } from 'commands';
 import { useBotActions } from 'actions';
 import { showGroupEventsScene } from '@scenes/showGroupEvents';
+import { dateFormater } from 'utils/dateFormater';
 
 config();
 
@@ -28,6 +29,23 @@ bot.use(async (ctx, next) => {
     ctx.session.user = await firestoreApi.user.getUserByUID(String(ctx.chat?.id));
     ctx.session.mentor = await firestoreApi.mentor.getMentorByUID(String(ctx.chat?.id));
     next();
+})
+bot.use(async (ctx, next) => {
+    if(ctx.session.user) {
+        setInterval(async () => {
+            const events = await firestoreApi.group.getGroupByName(ctx.session.user.group!);
+            events.events?.forEach(async (eventId) => {
+                const event = await firestoreApi.event.getEventById(eventId);
+                const eventDate = dateFormater(event.date!, event.time!);
+                const currentDate = new Date()
+                const dif = Math.round(((eventDate.getTime() - currentDate.getTime()) / 1000) / 60);
+                if(dif < 60) {
+                    ctx.sendMessage(`${event.name}`)
+                }
+            });
+        }, 1000*10)
+    }
+    next()
 })
 
 useBotCommands(bot);
