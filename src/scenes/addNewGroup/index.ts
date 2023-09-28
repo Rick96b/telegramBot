@@ -7,10 +7,10 @@ const text_handler = new Composer<MyContext>();
 text_handler.on('text', async (ctx) => {
 	const groupNames = await firestoreApi.group.getExistingGroupNames()
 	if(groupNames.names.includes(ctx.message.text)) {
-		await ctx.reply("Такое название группы уже существует")
-		await ctx.scene.reenter();
+		await ctx.reply("Такое название группы уже существует");
 	} else {
-		await firestoreApi.group.addNewGroup(ctx.message.text, String(ctx.chat.id))
+		firestoreApi.group.addNewGroup(ctx.message.text, String(ctx.chat.id));
+		firestoreApi.mentor.addGroupToMentor(ctx.message.text, ctx.session.mentor.uid!)
 		await ctx.reply("Группа создана!",)
 		return ctx.scene.leave();
 	}

@@ -4,7 +4,6 @@ import { firestore } from "../config";
 
 export const addNewEvent = async (event: Event) => {
     if(event.id) {
-        console.log(event)
         setDoc(doc(firestore, 'Events', event.id), event)
         updateDoc(doc(firestore, 'Groups', event.group!), {
             events: arrayUnion(event.id)
@@ -15,4 +14,10 @@ export const addNewEvent = async (event: Event) => {
 
 export const getEventById = async (eventId: string) => {
     return (await getDoc(doc(firestore, 'Events', eventId))).data() as Event || {};
+}
+
+export const addParticipant =  async (participantId: string, eventId:string) => {
+    updateDoc(doc(firestore, 'Events', eventId), {
+        participants: arrayUnion(participantId)
+    })
 }

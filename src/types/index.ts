@@ -20,6 +20,8 @@ export type Event = Partial<{
 	name: string;
 	time: string;
 	date: string;
+	place: string;
+	participants: string[];
 }>
 
 export type Group = Partial<{

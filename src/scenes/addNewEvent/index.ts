@@ -5,6 +5,7 @@ import { firestoreApi } from "core/firestore";
 import { Event } from "types";
 
 const group_handler = new Composer<MyContext>();
+const place_handler = new Composer<MyContext>();
 const time_handler = new Composer<MyContext>();
 const date_handler = new Composer<MyContext>();
 const name_handler = new Composer<MyContext>();
@@ -38,9 +39,17 @@ date_handler.on("text", async ctx => {
 name_handler.on("text", async ctx => {
     let state = ctx.wizard.state as Event;
     state.name = ctx.message.text;
+    ctx.reply('Введите адрес встречи')
+    return ctx.wizard.next();
+});
+
+place_handler.on("text", async ctx => {
+    await ctx.reply('Мероприятие успешно добавлено!')
+    let state = ctx.wizard.state as Event;
+    state.place = ctx.message.text;
     firestoreApi.event.addNewEvent({...state, id: uuidv4()})
     return ctx.scene.leave();
-});
+})
 
 
 const addEventScene = new Scenes.WizardScene<MyContext>(
@@ -55,6 +64,7 @@ const addEventScene = new Scenes.WizardScene<MyContext>(
 	time_handler,
 	date_handler,
 	name_handler,
+    place_handler
 );
 
 export {addEventScene}
